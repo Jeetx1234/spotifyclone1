@@ -17,6 +17,7 @@ function formatTime(seconds) {
 async function getsongs() {
 
     let response = await fetch("https://api.github.com/repos/Jeetx1234/spotifyclone1/contents/songs")
+
     let data = await response.json()
 
     let songs = []
@@ -38,7 +39,7 @@ let songs;
 
 const playmusic = (track, pause = false) => {
 
-    currentSong.src = "https://raw.githubusercontent.com/Jeetx1234/spotifyclone1/main/songs/" + track
+    currentSong.src = "https://Jeetx1234.github.io/spotifyclone1/songs/" + track
 
     if (!pause) {
         currentSong.play()
