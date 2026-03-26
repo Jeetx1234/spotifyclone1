@@ -16,7 +16,7 @@ function formatTime(seconds) {
 
 async function getsongs() {
 
-    let response = await fetch("https://api.github.com/repos/Jeet1234/spotifyclone1/contents/songs")
+    let response = await fetch("https://api.github.com/repos/Jeetx1234/spotifyclone1/contents/songs")
 
     let data = await response.json()
 
