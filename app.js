@@ -20,21 +20,21 @@ function formatTime(seconds) {
 
 async function getsongs() {
 
-    let a = await fetch("songs/")
-    let response = await a.text();
+    let response = await fetch("https://api.github.com/repos/USERNAME/REPO_NAME/contents/songs")
 
-    let div = document.createElement("div")
-    div.innerHTML = response;
-    let as = div.getElementsByTagName("a")
+    let data = await response.json()
+
     let songs = []
-    for (let index = 0; index < as.length; index++) {
-        const element = as[index];
-        if (element.href.endsWith(".mp3")) {
-            songs.push(element.href.split("/songs/")[1]);
+
+    for (let file of data) {
+        if (file.name.endsWith(".mp3")) {
+            songs.push(file.name)
         }
     }
-    return (songs)
+
+    return songs
 }
+
 //TO PLAY SONG BY CLICKING FUNCTION
 
 let currentSong = new Audio()
