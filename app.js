@@ -14,10 +14,6 @@ function formatTime(seconds) {
 }
 
 
-
-
-
-
 async function getsongs() {
 
     let response = await fetch("https://api.github.com/repos/Jeet1234/spotifyclone1/contents/songs")
@@ -28,31 +24,40 @@ async function getsongs() {
 
     for (let file of data) {
         if (file.name.endsWith(".mp3")) {
-            songs.push(file.name)
+            songs.push({
+                name: file.name,
+                url: file.download_url
+            })
         }
     }
 
     return songs
 }
 
+
 //TO PLAY SONG BY CLICKING FUNCTION
 
 let currentSong = new Audio()
 let songs;
+
 const playmusic = (track, pause = false) => {
-    currentSong.src = "songs/" + track
+
+    currentSong.src = track.url
+
     if (!pause) {
         currentSong.play()
         play.src = "pause.svg";
     }
 
-
-    document.querySelector(".songname").innerHTML = decodeURI(track)
+    document.querySelector(".songname").innerHTML = decodeURI(track.name)
     document.querySelector(".songtime").innerHTML = "00:00 / 00:00"
 }
 
+
 async function main() {
- songs = await getsongs()
+
+    songs = await getsongs()
+
     playmusic(songs[0], true)
 
     let songul = document.querySelector(".songnames").getElementsByTagName("ul")[0]
@@ -61,7 +66,7 @@ async function main() {
         songul.innerHTML = songul.innerHTML + `<li>
             <img class="invert" src="music.svg" alt="">  
             <div class="info">
-                <div>${song.replaceAll("%20", " ")}</div>
+                <div>${song.name.replaceAll("%20", " ")}</div>
                 <div>Jeet</div>
             </div> 
             <div class="playnow">
@@ -73,12 +78,16 @@ async function main() {
 
     document.querySelectorAll(".songnames li").forEach(e => {
         e.addEventListener("click", element => {
-            playmusic(e.querySelector(".info").firstElementChild.innerHTML)
 
+            let songName = e.querySelector(".info").firstElementChild.innerHTML
+
+            let songObj = songs.find(s => s.name.replaceAll("%20", " ") === songName)
+
+            playmusic(songObj)
 
         })
-
     })
+
 
     play.addEventListener("click", () => {
         if (currentSong.paused) {
@@ -89,57 +98,73 @@ async function main() {
             currentSong.pause()
             play.src = "play.svg";
         }
-
     })
+
+
     //timeupdate
     currentSong.addEventListener("timeupdate", () => {
 
-        document.querySelector(".songtime").innerHTML = `${formatTime(currentSong.currentTime)}/${formatTime(currentSong.duration)} `
-        document.querySelector(".circle").style.left = (currentSong.currentTime / currentSong.duration) * 100 + "%"
+        document.querySelector(".songtime").innerHTML =
+            `${formatTime(currentSong.currentTime)}/${formatTime(currentSong.duration)} `
+
+        document.querySelector(".circle").style.left =
+            (currentSong.currentTime / currentSong.duration) * 100 + "%"
     })
+
 
     //event listener to seek bar
-
     document.querySelector(".seekbar").addEventListener("click", e => {
+
         let percent = (e.offsetX / e.target.getBoundingClientRect().width) * 100;
+
         document.querySelector(".circle").style.left = percent + "%";
+
         currentSong.currentTime = (percent * currentSong.duration) / 100
-
     })
 
-    document.querySelector(".hamburger").addEventListener("click" , () => {
-     document.querySelector(".left").style.left = 0 ;
+
+    document.querySelector(".hamburger").addEventListener("click", () => {
+        document.querySelector(".left").style.left = 0;
     })
 
-    document.querySelector(".close").addEventListener("click" , () => {
-        document.querySelector(".left").style.left = -150 + "%" ;
-    } )
-   
-   next.addEventListener("click" , () => {
-        let index = songs.indexOf(currentSong.src.split("/").slice(-1) [0])
-        if(index+1 < songs.length ){
-        playmusic(songs[index+1])
+
+    document.querySelector(".close").addEventListener("click", () => {
+        document.querySelector(".left").style.left = -150 + "%";
+    })
+
+
+    next.addEventListener("click", () => {
+
+        let index = songs.findIndex(s => s.url === currentSong.src)
+
+        if (index + 1 < songs.length) {
+            playmusic(songs[index + 1])
         }
+    })
 
-             
-})
 
-   prev.addEventListener("click" , () => {
-    let index = songs.indexOf(currentSong.src.split("/").slice(-1) [0])
-        if(index-1 >= 0){
-        playmusic(songs[index-1])
+    prev.addEventListener("click", () => {
+
+        let index = songs.findIndex(s => s.url === currentSong.src)
+
+        if (index - 1 >= 0) {
+            playmusic(songs[index - 1])
         }
-})
+    })
 
-document.querySelector(".range").getElementsByTagName("input")[0].addEventListener("change" , (e) => {
-    currentSong.volume = parseInt(e.target.value) / 100
-})
 
-//click cards to play the music :
-document.querySelector("card").addEventListener("click" , () => {
-    
-})
+    document.querySelector(".range")
+        .getElementsByTagName("input")[0]
+        .addEventListener("change", (e) => {
 
+            currentSong.volume = parseInt(e.target.value) / 100
+        })
+
+
+    //click cards to play the music :
+    document.querySelector(".card").addEventListener("click", () => {
+
+    })
 
 }
 
