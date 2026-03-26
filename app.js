@@ -14,6 +14,7 @@ function formatTime(seconds) {
 }
 
 
+
 async function getsongs() {
 
     let response = await fetch("https://api.github.com/repos/Jeetx1234/spotifyclone1/contents/songs")
@@ -39,7 +40,7 @@ let songs;
 
 const playmusic = (track, pause = false) => {
 
-    currentSong.src = "https://Jeetx1234.github.io/spotifyclone1/songs/" + track
+    currentSong.src = "https://jeetx1234.github.io/spotifyclone1/songs/" + track
 
     if (!pause) {
         currentSong.play()
@@ -49,7 +50,6 @@ const playmusic = (track, pause = false) => {
     document.querySelector(".songname").innerHTML = decodeURI(track)
     document.querySelector(".songtime").innerHTML = "00:00 / 00:00"
 }
-
 
 
 async function main() {
@@ -64,7 +64,7 @@ async function main() {
         songul.innerHTML = songul.innerHTML + `<li>
             <img class="invert" src="music.svg" alt="">  
             <div class="info">
-                <div>${song.name.replaceAll("%20", " ")}</div>
+                <div>${song.replaceAll("%20", " ")}</div>
                 <div>Jeet</div>
             </div> 
             <div class="playnow">
@@ -74,15 +74,10 @@ async function main() {
         </li>`;
     }
 
-    document.querySelectorAll(".songnames li").forEach(e => {
-        e.addEventListener("click", element => {
 
-            let songName = e.querySelector(".info").firstElementChild.innerHTML
-
-            let songObj = songs.find(s => s.name.replaceAll("%20", " ") === songName)
-
-            playmusic(songObj)
-
+    document.querySelectorAll(".songnames li").forEach((e, index) => {
+        e.addEventListener("click", () => {
+            playmusic(songs[index])
         })
     })
 
@@ -118,6 +113,7 @@ async function main() {
         document.querySelector(".circle").style.left = percent + "%";
 
         currentSong.currentTime = (percent * currentSong.duration) / 100
+
     })
 
 
@@ -133,17 +129,18 @@ async function main() {
 
     next.addEventListener("click", () => {
 
-        let index = songs.findIndex(s => s.url === currentSong.src)
+        let index = songs.indexOf(currentSong.src.split("/").slice(-1)[0])
 
         if (index + 1 < songs.length) {
             playmusic(songs[index + 1])
         }
+
     })
 
 
     prev.addEventListener("click", () => {
 
-        let index = songs.findIndex(s => s.url === currentSong.src)
+        let index = songs.indexOf(currentSong.src.split("/").slice(-1)[0])
 
         if (index - 1 >= 0) {
             playmusic(songs[index - 1])
@@ -167,6 +164,7 @@ async function main() {
 }
 
 main()
+
 
 
 
