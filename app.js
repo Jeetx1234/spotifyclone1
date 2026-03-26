@@ -17,17 +17,13 @@ function formatTime(seconds) {
 async function getsongs() {
 
     let response = await fetch("https://api.github.com/repos/Jeetx1234/spotifyclone1/contents/songs")
-
     let data = await response.json()
 
     let songs = []
 
     for (let file of data) {
         if (file.name.endsWith(".mp3")) {
-            songs.push({
-                name: file.name,
-                url: file.download_url
-            })
+            songs.push(file.name)
         }
     }
 
@@ -42,16 +38,17 @@ let songs;
 
 const playmusic = (track, pause = false) => {
 
-    currentSong.src = track.url
+    currentSong.src = "https://raw.githubusercontent.com/Jeetx1234/spotifyclone1/main/songs/" + track
 
     if (!pause) {
         currentSong.play()
         play.src = "pause.svg";
     }
 
-    document.querySelector(".songname").innerHTML = decodeURI(track.name)
+    document.querySelector(".songname").innerHTML = decodeURI(track)
     document.querySelector(".songtime").innerHTML = "00:00 / 00:00"
 }
+
 
 
 async function main() {
